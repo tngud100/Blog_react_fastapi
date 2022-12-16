@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends
 
 router = APIRouter(
-    prefix="api/v1/sign",
+    prefix="/api/v1/sign",
     tags=["sign"]
 )
 

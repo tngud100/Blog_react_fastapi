@@ -3,8 +3,7 @@ import UserInfoLayout from "components/layouts/UserInfoLayout";
 import { useEffect, useRef } from "react";
 import { Button, Card, Col, Form, InputGroup, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-
-import axios from "axios";
+import { customAxios } from "util/CustomAxios";
 
 const Join = () => {
   const refs = useRef({
@@ -27,11 +26,12 @@ const Join = () => {
       simpleDesc: refs.current.simpleDescElement.value,
     };
 
-    axios({
-      method: `post`,
-      url: `http://localhost:8000/join`,
-      data: user,
-    })
+    customAxios
+      .publicAxios({
+        method: `post`,
+        url: `/api/vi/sign/up`,
+        data: user,
+      })
       .then((response) => {
         if (response.status === 201) {
           alert("회원가입이 완료되었습니다.");
@@ -88,7 +88,7 @@ const Join = () => {
   }, []);
 
   return (
-    <UserInfoLayout isNavbar={false}>
+    <UserInfoLayout isNavbar={true}>
       <Card className="shadow-2-strong" style={{ borderRadius: "1rem" }}>
         <Card.Body className="p-5 text-center">
           <h3 className="mb-3">

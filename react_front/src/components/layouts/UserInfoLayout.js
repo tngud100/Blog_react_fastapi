@@ -1,10 +1,10 @@
-import React from "react";
-import PropTypes from "prop-types";
+import MyNavbar from "components/commons/MyNavbar";
 import { Col, Container, Row } from "react-bootstrap";
 
-const UserInfoLayout = ({ children }) => {
+const UserInfoLayout = ({ children, isNavbar }) => {
   return (
     <section style={{ backgroundColor: "#508bfc", minHeight: "100vh" }}>
+      {isNavbar ? <MyNavbar/> : null}
       <Container className="py-5 h-100">
         <Row className="d-flex justify-content-center align-items-center h-100">
           <Col className="col-12 col-md-8 col-lg-6 col-xl-5">{children}</Col>
@@ -12,11 +12,6 @@ const UserInfoLayout = ({ children }) => {
       </Container>
     </section>
   );
-};
-
-UserInfoLayout.propTypes = {
-  children: PropTypes.node.isRequired,
-  isNavbar: PropTypes.bool.isRequired,
 };
 
 export default UserInfoLayout;
