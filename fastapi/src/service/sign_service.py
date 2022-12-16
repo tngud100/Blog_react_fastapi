@@ -1,26 +1,27 @@
 
-import bcrypt
 from datetime import datetime
-from database.database import DBase
-from dto import res_dto, sign_dto
+import bcrypt
 from sqlalchemy.orm import Session
+
+from database.database import DBase
+from dto import sign_dto
 
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 
 from entity.user_entity import UserEntity
+from util import functions
 
+USER_ID_EXIST_ERROR = {"code" : 1, "message" : "이미 존재하는 아이디입니다."}
+INTERNAL_SERVER_ERROR = {"code" : 99, "message" : "서버 내부 에러입니다."}
 
 def sign_up(reqDTO: sign_dto.ReqSignUp, db: Session):
     userEntity: UserEntity = db.query(UserEntity).filter(
         UserEntity.id == reqDTO.id).first()
     if userEntity != None:
-        resDTO = res_dto.ResDTO(
-            code=1,
-            message="이미 존재하는 아이디 입니다."
-        )
-        encodedResDTO = jsonable_encoder(resDTO)
-        return JSONResponse(status_code=400, content=encodedResDTO)
+        
+        return functions.res_generator(status_code=400, error_dict=USER_ID_EXIST_ERROR)
+
     db_user = UserEntity(
         id=reqDTO.id,
         password=bcrypt.hashpw(
@@ -36,23 +37,13 @@ def sign_up(reqDTO: sign_dto.ReqSignUp, db: Session):
     except Exception as e:
         db.rollBack()
         print(e)
-        resDTO = res_dto.ResDTO(
-            code=99,
-            message="서버 내부 에러 입니다.",
-            content=e
-        )
-        encodedError = jsonable_encoder(resDTO)
-        return JSONResponse(status_code=500, content=encodedError)
+        
+        return functions.res_generator(status_code=500, error_dict=INTERNAL_SERVER_ERROR)
+        
     finally:
         db.commit()
 
     db.refresh(db_user)
-    resDTO = res_dto.ResDTO(
-        code=0,
-        message="성공",
-        content=sign_dto.ResSignUp(
-            idx=db_user.idx
-        )
-    )
-    encodedResDTO = jsonable_encoder(resDTO)
-    return JSONResponse(status_code=201, content=encodedResDTO)
+    
+    return functions.res_generator(status_code=201,content=sign_dto.ResSignUp(idx=db_user.idx))
+    
