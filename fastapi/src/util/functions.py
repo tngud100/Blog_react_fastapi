@@ -1,8 +1,8 @@
-
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
 from dto import res_dto
+
 
 def res_generator(status_code: int = 200, error_dict: dict | None = None, content: object | None = None):
     resDTO = res_dto.ResDTO(
