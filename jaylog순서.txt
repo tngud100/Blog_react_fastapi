@@ -1,0 +1,15 @@
+- fastapi / 회원가입 수정
+- fastapi / function 유틸 만들기
+- react / customAxios 만들기
+- react navbar 만들기
+- jwt 토큰 만들기
+- 로그인
+- 글 리스트
+- 글 쓰기
+- jwt 미들웨어 만들기
+- 글 상세
+- 좋아요
+- 글 수정
+- 글 삭제
+- 내정보
+- 내정보 수정
