@@ -1,32 +1,43 @@
-import React from 'react'
-import { Anchor, Button, Container, Dropdown, Form, Image, InputGroup, Navbar, NavDropdown, Row } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuthStore } from 'stores/RootStore'
-import LogoImg from "assets/img/jaylog.png"
-import SearchImg from "assets/img/search.png"
-import UserImg from "assets/img/user.png"
+import React from "react";
+import {
+  Anchor,
+  Button,
+  Container,
+  Dropdown,
+  Form,
+  Image,
+  InputGroup,
+  Navbar,
+  NavDropdown,
+  Row,
+} from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthStore } from "stores/RootStore";
+import LogoImg from "assets/img/jaylog.png";
+import SearchImg from "assets/img/search.png";
+import UserImg from "assets/img/user.png";
 
 const MyNavbar = () => {
-    const authStore = useAuthStore();
-    const navigate = useNavigate();
+  const authStore = useAuthStore();
+  const navigate = useNavigate();
 
-    return (
+  return (
     <div
-        class="sticky-top shadow"
-        style={{ backgroundColor: "rgba(255, 255, 255, 0.95)" }}
+      className="sticky-top shadow"
+      style={{ backgroundColor: "rgba(255, 255, 255, 0.95)" }}
     >
-        <Navbar>
-            <Container>
-                <Link to={"/"} className="navbar-brand fs-3 text-dark">
-                    <Image src={LogoImg} style={{height: "50px"}}></Image>
-                </Link>
-            <Form className="d-none d-sm-none d-md-flex">
-                <Form.Control type="text" placeholder='미구현'/>
-                <button className='btn' type='button'>
-                    <Image src={SearchImg} width="20" />
-                </button>
-            </Form>
-            <div>
+      <Navbar>
+        <Container>
+          <Link to={"/"} className="navbar-brand fs-3 text-dark">
+            <Image src={LogoImg} style={{ height: "50px" }} />
+          </Link>
+          <Form className="d-none d-sm-none d-md-flex">
+            <Form.Control type="text" placeholder="미구현" />
+            <button className="btn" type="button">
+              <Image src={SearchImg} width="20" />
+            </button>
+          </Form>
+          <div>
             <InputGroup>
               <div>
                 {authStore.loginUser ? (
@@ -67,8 +78,7 @@ const MyNavbar = () => {
                       href="#"
                       className="dropdown-item"
                       onClick={() => {
-                        authStore.setLoginUser(null);
-                        navigate("/", { replace: true });
+                        navigate("/login", { replace: true });
                       }}
                     >
                         로그아웃
@@ -77,13 +87,11 @@ const MyNavbar = () => {
                 ) : null}
               </Row>
             </InputGroup>
-            </div>
-            </Container>
-        </Navbar>
-
+          </div>
+        </Container>
+      </Navbar>
     </div>
-    
-    );
+  );
 };
 
-export default MyNavbar
+export default MyNavbar;

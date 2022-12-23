@@ -1,4 +1,5 @@
 import MyNavbar from "components/commons/MyNavbar";
+import React from "react";
 import { Col, Container, Row } from "react-bootstrap";
 
 const UserInfoLayout = ({ children, isNavbar }) => {

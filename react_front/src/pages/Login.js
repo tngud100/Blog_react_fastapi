@@ -1,7 +1,7 @@
 import JaylogImg from "assets/img/jaylog.png";
 import UserInfoLayout from "components/layouts/UserInfoLayout";
 import { useEffect, useRef } from "react";
-import { Button, Card, Col, Form, InputGroup, Row } from "react-bootstrap";
+import { Button, Card, Form, InputGroup } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "stores/RootStore";
 import { customAxios } from "util/CustomAxios";
@@ -26,6 +26,7 @@ const Login = () => {
   // 로그인 요청하는 함수
   // 로그인 버튼을 누르면 실행됨
   const requestLogin = () => {
+    // 서버와 통신하기 전에 입력값 검증
     if (!validateFields()) {
       return;
     }
@@ -44,7 +45,7 @@ const Login = () => {
         data: loginUser,
       })
       .then((response) => {
-        // console.log(response);
+        console.log(response);
         if (response.status === 200) {
           // rememberMe 세팅
           if (rememberMeElement.checked) {
@@ -52,7 +53,7 @@ const Login = () => {
           } else {
             localStorage.removeItem("rememberId");
           }
-          // 엑세스토큰 리프레쉬토큰 저장
+          // 액세스토큰 리프레시토큰 저장
           const content = response.data.content;
           localStorage.setItem("accessToken", content.accessToken);
           localStorage.setItem("refreshToken", content.refreshToken);
@@ -65,11 +66,11 @@ const Login = () => {
         }
       })
       .catch((error) => {
-        const detail = error?.response?.data?.detail;
-        if (detail != null) {
-          alert(JSON.stringify(detail));
-        }
-         else {
+        if (error?.response?.data?.detail != null) {
+          alert(JSON.stringify(error?.response?.data?.detail));
+        } else if (error?.response?.data?.message != null) {
+          alert(error.response.data.message);
+        } else {
           alert("오류가 발생했습니다. 관리자에게 문의하세요.");
         }
       })
@@ -94,12 +95,11 @@ const Login = () => {
 
     return true;
   };
+
   // 페이지가 로드되면 실행되는 함수
   const setLoginPage = () => {
     // 창이 켜지면 아이디 입력창에 포커스가 가도록 설정
-
     refs.current.idElement.focus();
-
     // 아이디 기억하기 체크박스가 체크되어있으면 아이디 입력창에 아이디를 넣어줌
     const rememberId = JSON.parse(localStorage.getItem("rememberId"));
     if (rememberId !== null) {
@@ -109,48 +109,48 @@ const Login = () => {
   };
 
   useEffect(() => {
-    //로그인페이지 세팅
+    // 로그인페이지 세팅
     setLoginPage();
   }, []);
 
+  useEffect(() => {
+    authStore.setLoginUser(null);
+  }, [authStore]);
+
   return (
-    <UserInfoLayout isNavbar={false}>
+    <UserInfoLayout isNavbar={true}>
       <Card className="shadow-2-strong" style={{ borderRadius: "1rem" }}>
         <Card.Body className="p-5 text-center">
           <h3 className="mb-3">
             <img src={JaylogImg} style={{ height: "100px" }} alt="jaylog"></img>
           </h3>
           <InputGroup className="mb-3">
-            <InputGroup.Text id="idAddOn">&nbsp;아이디 &nbsp;</InputGroup.Text>
+            <InputGroup.Text id="idAddOn">아이디</InputGroup.Text>
             <Form.Control
               ref={(el) => (refs.current.idElement = el)}
               type="text"
               aria-describedby="idAddOn"
             />
           </InputGroup>
-          <Row>
-            <Col>
-              <InputGroup className="mb-3">
-                <InputGroup.Text id="idAddOn">비밀번호</InputGroup.Text>
-                <Form.Control
-                  ref={(el) => (refs.current.pwElement = el)}
-                  type="password"
-                  aria-describedby="pwAddOn"
-                  onKeyUp={enterKeyLogin}
-                />
-              </InputGroup>
-            </Col>
-          </Row>
+          <InputGroup className="mb-3">
+            <InputGroup.Text id="pwAddOn">비밀번호</InputGroup.Text>
+            <Form.Control
+              ref={(el) => (refs.current.pwElement = el)}
+              type="password"
+              aria-describedby="pwAddOn"
+              onKeyUp={enterKeyLogin}
+            />
+          </InputGroup>
           <Form.Group className="d-flex justify-content-start mb-4">
             <Form.Check
               type="checkbox"
               ref={(el) => (refs.current.rememberMeElement = el)}
               label="아이디 기억하기"
-            ></Form.Check>
+            />
           </Form.Group>
           <Button
-            className="btn-primary"
             type="button"
+            className="btn-primary"
             style={{ width: "100%" }}
             onClick={requestLogin}
           >

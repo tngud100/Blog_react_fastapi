@@ -29,10 +29,11 @@ const Join = () => {
     customAxios
       .publicAxios({
         method: `post`,
-        url: `/api/vi/sign/up`,
+        url: `/api/v1/sign/up`,
         data: user,
       })
       .then((response) => {
+        console.log(response);
         if (response.status === 201) {
           alert("회원가입이 완료되었습니다.");
 
@@ -42,9 +43,10 @@ const Join = () => {
         }
       })
       .catch((error) => {
-        const detail = error?.response?.data?.detail;
-        if (detail != null) {
-          alert(JSON.stringify(detail));
+        if (error?.response?.data?.detail != null) {
+          alert(JSON.stringify(error?.response?.data?.detail));
+        } else if (error?.response?.data?.message != null) {
+          alert(error.response.data.message);
         } else {
           alert("오류가 발생했습니다. 관리자에게 문의하세요.");
         }
@@ -133,6 +135,7 @@ const Join = () => {
             />
           </InputGroup>
           <Button
+            type="button"
             className="btn-primary"
             style={{ width: "100%" }}
             onClick={requestJoin}

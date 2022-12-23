@@ -1,5 +1,5 @@
-import jwtDecode from "jwt-decode";
-import { useCallback, useEffect, useState } from "react";
+const { default: jwtDecode } = require("jwt-decode");
+const { useState, useCallback, useEffect } = require("react");
 
 const AuthStore = () => {
   const [loginUser, setLoginUser] = useState(undefined);
@@ -16,7 +16,6 @@ const AuthStore = () => {
     const accessToken = localStorage.getItem("accessToken");
     setLoginUserByToken(accessToken);
   }, []);
-
   useEffect(() => {
     if (loginUser === null) {
       localStorage.removeItem("accessToken");
