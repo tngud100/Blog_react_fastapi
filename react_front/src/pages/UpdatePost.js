@@ -3,7 +3,8 @@ import ExitImg from "assets/img/exit.svg";
 import WriteLayout from "components/layouts/WriteLayout";
 import { useEffect, useRef, useState } from "react";
 import { Button, Col, Form, Image, Row } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useAuthStore } from "stores/RootStore";
 
 const UpdatePost = () => {
   const refs = useRef({
@@ -11,13 +12,31 @@ const UpdatePost = () => {
     /** @type {Editor} editor */
     editor: null,
   });
+  
+  const authStore = useAuthStore();
+  const navigate = useNavigate();
+  const { postIdx } = useParams();
+  const [post, setPost] = useState();
 
   const [editorHeight, setEditorHeight] = useState(0);
+  
 
   useEffect(() => {
     setEditorHeight(`${window.innerHeight - 190}px`);
     window.onresize = () => setEditorHeight(`${window.innerHeight - 190}px`);
   }, []);
+  
+  useEffect(() => {
+    if (authStore.loginUser === null) {
+      alert("로그인이 필요합니다.");
+      navigate("/login", { replace: true });
+    }
+    if (isNaN(postIdx)) {
+      alert("잘못된 접근입니다.");
+      navigate("/", { replace: true });
+      return;
+    }
+  }, [authStore, navigate, postIdx]);
 
   return (
     <WriteLayout>

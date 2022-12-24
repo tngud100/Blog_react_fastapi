@@ -18,12 +18,40 @@ const Post = () => {
   const { postIdx } = useParams();
   const navigate = useNavigate();
 
-  const getPost = useCallback(() => {
-    if (isNaN(postIdx)) {
-      alert("잘못된 접근입니다.");
-      navigate("/", { replace: true });
+  
+  const deletePost = () => {
+    if(window.confirm("정말 삭제하시겠습니까?") === false){
       return;
     }
+    customAxios
+     .privateAxios({
+        method: `delete`,
+        url: `/api/v1/posts/${postIdx}`,
+      })
+      .then((response) => {
+        console.log(response);
+        if (response.status === 200) {
+          alert("삭제되었습니다.");
+          navigate("/", { replace: true });
+        } else {
+          alert(response.data.message);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error?.response?.data?.detail != null) {
+          alert(JSON.stringify(error?.response?.data?.detail));
+        } else if (error?.response?.data?.message != null) {
+          alert(error.response.data.message);
+        } else {
+          alert("오류가 발생했습니다. 관리자에게 문의하세요.");
+        }
+      })
+      .finally(() => {});
+    
+  }
+
+  const getPost = useCallback(() => {
 
     const selectedAxios =
       authStore.loginUser != null
@@ -52,15 +80,24 @@ const Post = () => {
         }
       })
       .finally(() => {});
-  }, [authStore, navigate, postIdx]);
+  }, [authStore, postIdx]);
 
   useEffect(() => {
+    
+    if (isNaN(postIdx)) {
+      alert("잘못된 접근입니다.");
+      navigate("/", { replace: true });
+      return;
+    }
+
     if (authStore.loginUser !== undefined) {
       // 데이터 가져오는 함수 실행
       getPost();
     }
-  }, [authStore, getPost]);
+  }, [authStore, getPost, navigate, postIdx]);
 
+
+  
   return (
     <CommonLayout isNavbar={true}>
       <Container className="p-5">
@@ -92,10 +129,11 @@ const Post = () => {
           </button>
           {authStore.loginUser?.idx === post?.writer.idx ? (
             <div>
-              <Button variant="outline-success" type="button">
+              <Button
+               variant="outline-success" type="button" onClick={() => navigate(`/update-post/${postIdx}`)}>
                 수정
               </Button>
-              <Button variant="outline-danger" className="ms-2" type="button">
+              <Button onClick={(deletePost)} variant="outline-danger" className="ms-2" type="button">
                 삭제
               </Button>
             </div>

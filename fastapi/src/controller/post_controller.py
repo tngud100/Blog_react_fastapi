@@ -14,7 +14,7 @@ router = APIRouter(
 
 @router.delete("/{post_idx}")
 async def delete_post(request: Request, post_idx: int = Path(), db: Session = Depends(get_db)) -> JSONResponse:
-    return ...
+    return post_service.delete_post(request, post_idx, db)
     
 
 @router.get("/{post_idx}")
