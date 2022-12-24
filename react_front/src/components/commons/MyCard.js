@@ -2,8 +2,12 @@ import React, { useMemo } from "react";
 import { Card, Col, Image, InputGroup, Row } from "react-bootstrap";
 import NoimageImg from "assets/img/no-image.png";
 import LikeImg from "assets/img/like.svg";
+import { useNavigate } from "react-router-dom";
 
 const MyCard = ({ post }) => {
+
+  const navigate = useNavigate();
+
   /** @type {React.CSSProperties} cardContainer */
   const cardContainer = useMemo(() => {
     return {
@@ -56,7 +60,7 @@ const MyCard = ({ post }) => {
           />
         </div>
         <Card.Body>
-          <Card.Title style={cardTitle}>{post.title}</Card.Title>
+          <Card.Title style={cardTitle} onClick={() => {navigate(`/post/${post.idx}`)}} >{post.title}</Card.Title>
           <Card.Text style={cardText}>{post.summary}</Card.Text>
           <small className="text-muted">{post.createDate}</small>
         </Card.Body>

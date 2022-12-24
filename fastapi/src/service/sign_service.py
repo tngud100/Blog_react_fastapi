@@ -7,9 +7,9 @@ from config import constants
 from dto import sign_dto
 from entity.user_entity import UserEntity
 from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from util import functions
+from fastapi.responses import JSONResponse
 
 USER_ID_EXIST_ERROR = {"code": 1, "message": "이미 존재하는 아이디입니다."}
 ID_NOT_EXIST_ERROR = {"code": 2, "message": "가입되지 않은 아이디 입니다."}
@@ -20,30 +20,30 @@ ACCESS_TOKEN_ERROR = {"code": 6, "message": "액세스 토큰이 유효하지 �
 INTERNAL_SERVER_ERROR = {"code": 99, "message": "서버 내부 에러입니다."}
 
 
-
-
 def sign_refresh(req_dto: sign_dto.ReqRefresh, db: Session) -> JSONResponse:
-    
+
     try:
-        refresh_jwt_dto = sign_dto.RefreshJwt.toDTO(jwt.decode(req_dto.refreshToken, constants.JWT_SALT, algorithms=["HS256"]))
+        refresh_jwt_dto = sign_dto.RefreshJwt.toDTO(jwt.decode(
+            req_dto.refreshToken, constants.JWT_SALT, algorithms=["HS256"]))
     except:
         return functions.res_generator(400, error_dict=REFRESH_TOKEN_ERROR)
-    
-    if(refresh_jwt_dto.exp < time.time()):
+
+    if (refresh_jwt_dto.exp < time.time()):
         return functions.res_generator(400, error_dict=REFRESH_TOKEN_ERROR)
-    
+
     user_entity: UserEntity = db.query(UserEntity).filter(
         UserEntity.idx == refresh_jwt_dto.idx).first()
-    
-    if(user_entity == None):
+
+    if (user_entity == None):
         return functions.res_generator(400, ID_NOT_EXIST_ERROR)
-    
-    if(user_entity.delete_date != None):
+
+    if (user_entity.delete_date != None):
         return functions.res_generator(400, DELETED_USER_ERROR)
 
     access_token, refresh_token = gen_token(user_entity)
 
     return functions.res_generator(status_code=200, content=sign_dto.ResRefresh(accessToken=access_token, refreshToken=refresh_token))
+
 
 def sign_up(req_dto: sign_dto.ReqSignUp, db: Session):
 
@@ -96,6 +96,7 @@ def sign_in(req_dto: sign_dto.ReqSignIn, db: Session):
 
     return functions.res_generator(status_code=200, content=sign_dto.ResSignIn(accessToken=access_token, refreshToken=refresh_token))
 
+
 def gen_token(user_entity):
     access_jwt_dto = sign_dto.AccessJwt(
         idx=user_entity.idx,
@@ -116,5 +117,5 @@ def gen_token(user_entity):
 
     refresh_token = jwt.encode(jsonable_encoder(refresh_jwt_dto),
                                constants.JWT_SALT, algorithm="HS256")
-                               
-    return access_token,refresh_token
+
+    return access_token, refresh_token

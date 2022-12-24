@@ -14,9 +14,27 @@ from entity.user_entity import UserEntity
 from fastapi import Request
 from util import functions
 
-AUTHORIZATION_ERROR = {"code" : 1, "message" : "인증되지 않은 사용자입니다"}
-ID_ERROR = {"code" : 1, "message" : "계정에 문제가 있습니다."}
+AUTHORIZATION_ERROR = {"code": 1, "message": "인증되지 않은 사용자입니다."}
+ID_ERROR = {"code": 2, "message": "계정에 문제가 있습니다."}
+POST_NOT_EXIST_ERROR = {"code": 3, "message": "해당 글이 없습니다."}
 INTERNAL_SERVER_ERROR = {"code": 99, "message": "서버 내부 에러입니다."}
+
+def delete_post(request: Request, post_idx: int, db: Session) -> JSONResponse:
+    
+    return ...
+
+def get_post(request: Request, post_idx: int, db: Session) -> JSONResponse:
+    auth_user: sign_dto.AccessJwt | None = request.state.user
+
+    post_entity: PostEntity = db.query(PostEntity).filter(
+        PostEntity.idx == post_idx).filter(
+            PostEntity.delete_date == None).first()
+
+    if post_entity == None:
+        return functions.res_generator(400, POST_NOT_EXIST_ERROR)
+
+    return functions.res_generator(content=post_dto.ResDetailPost.toDTO(post_entity, auth_user))
+
 
 def get_posts(db: Session):
     post_entity_list: list[PostEntity] = db.query(
@@ -28,27 +46,28 @@ def get_posts(db: Session):
 
     return functions.res_generator(content=res_main_post_list)
 
+
 def insert_post(request: Request, req_dto: post_dto.ReqInsertPost, db: Session) -> JSONResponse:
     if not request.state.user:
         return functions.res_generator(status_code=401, error_dict=AUTHORIZATION_ERROR)
-    
+
     auth_user: sign_dto.AccessJwt = request.state.user
-    
-    user_entity : UserEntity = db.query(UserEntity).filter(
+
+    user_entity: UserEntity = db.query(UserEntity).filter(
         UserEntity.idx == auth_user.idx).filter(
             UserEntity.delete_date == None).first()
-    
-    if(user_entity == None):
+
+    if (user_entity == None):
         return functions.res_generator(400, ID_ERROR)
-    
+
     new_post = PostEntity(
-        title = req_dto.title,
-        content = req_dto.content,
-        summary = req_dto.summary,
-        thumbnail = req_dto.thumbnail,
-        user_idx = user_entity.idx
+        title=req_dto.title,
+        content=req_dto.content,
+        summary=req_dto.summary,
+        thumbnail=req_dto.thumbnail,
+        user_idx=user_entity.idx
     )
-    
+
     try:
         db.add(new_post)
         db.flush()
@@ -58,7 +77,7 @@ def insert_post(request: Request, req_dto: post_dto.ReqInsertPost, db: Session) 
         return functions.res_generator(status_code=500, error_dict=INTERNAL_SERVER_ERROR, content=e)
     finally:
         db.commit()
-    
+
     db.refresh(new_post)
-    
+
     return functions.res_generator(status_code=201, content=post_dto.ResInsertPost(idx=new_post.idx))

@@ -12,7 +12,7 @@ from middleware.jwt_middleware import JwtMiddleware
 app = FastAPI()
 
 # cors 설정 미들웨어
-origins = ["http://localhost:3000"]
+origins = ["http://localhost:3000", "http://52.78.101.85:3000"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -29,4 +29,7 @@ app.include_router(post_controller.router)
 
 
 if __name__ == "__main__":
+    # TODO 테스트
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    # TODO 배포
+    # uvicorn.run("main:app", host="0.0.0.0", port=8000)

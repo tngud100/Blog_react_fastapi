@@ -37,8 +37,8 @@ class CustomAxios {
       // refreshToken 확인
       if (
         refreshToken == null ||
-        jwtDecode(refreshToken).exp < Date.now() / 1000)
-      {
+        jwtDecode(refreshToken).exp < Date.now() / 1000
+      ) {
         // refreshToken 무효
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");

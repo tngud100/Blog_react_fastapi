@@ -81,7 +81,7 @@ const MyNavbar = () => {
                         navigate("/login", { replace: true });
                       }}
                     >
-                        로그아웃
+                      로그아웃
                     </Anchor>
                   </NavDropdown>
                 ) : null}

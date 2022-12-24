@@ -104,18 +104,21 @@ const InsertPost = () => {
     customAxios
       .privateAxios({
         method: `post`,
-        url: `/api/v1/posts/`,
+        url: `/api/v1/posts`,
         data: newPost,
       })
       .then((response) => {
+        console.log(response);
         if (response.status === 201) {
           alert("게시하였습니다.");
+          localStorage.removeItem("tempPost");
           navigate(`/post/${response.data.content.idx}`, { replace: true });
         } else {
           alert(response.data.message);
         }
       })
       .catch((error) => {
+        console.log(error);
         if (error?.response?.data?.detail != null) {
           alert(JSON.stringify(error?.response?.data?.detail));
         } else if (error?.response?.data?.message != null) {

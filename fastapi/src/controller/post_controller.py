@@ -2,8 +2,8 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from dependencies import get_db
-from dto import sign_dto, post_dto
-from fastapi import APIRouter, Depends, Request
+from dto import post_dto
+from fastapi import APIRouter, Depends, Path, Request
 from service import post_service
 
 router = APIRouter(
@@ -12,9 +12,20 @@ router = APIRouter(
 )
 
 
+@router.delete("/{post_idx}")
+async def delete_post(request: Request, post_idx: int = Path(), db: Session = Depends(get_db)) -> JSONResponse:
+    return ...
+    
+
+@router.get("/{post_idx}")
+async def get_post(request: Request, post_idx: int = Path(), db: Session = Depends(get_db)) -> JSONResponse:
+    return post_service.get_post(request, post_idx, db)
+
+
 @router.get("/")
 async def get_posts(db: Session = Depends(get_db)) -> JSONResponse:
     return post_service.get_posts(db)
+
 
 @router.post("/")
 async def insert_post(request: Request, req_dto: post_dto.ReqInsertPost, db: Session = Depends(get_db)) -> JSONResponse:
