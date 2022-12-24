@@ -12,7 +12,7 @@ from middleware.jwt_middleware import JwtMiddleware
 app = FastAPI()
 
 # cors 설정 미들웨어
-origins = ["http://localhost:3000", "http://52.78.101.85:3000"]
+origins = ["http://localhost:3000", "http://52.78.101.85"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
