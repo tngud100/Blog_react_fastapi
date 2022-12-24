@@ -18,18 +18,17 @@ const Post = () => {
   const { postIdx } = useParams();
   const navigate = useNavigate();
 
-  
   const deletePost = () => {
-    if(window.confirm("정말 삭제하시겠습니까?") === false){
+    if (window.confirm("정말 삭제하시겠습니까?") === false) {
       return;
     }
+
     customAxios
-     .privateAxios({
+      .privateAxios({
         method: `delete`,
         url: `/api/v1/posts/${postIdx}`,
       })
       .then((response) => {
-        console.log(response);
         if (response.status === 200) {
           alert("삭제되었습니다.");
           navigate("/", { replace: true });
@@ -48,11 +47,9 @@ const Post = () => {
         }
       })
       .finally(() => {});
-    
-  }
+  };
 
   const getPost = useCallback(() => {
-
     const selectedAxios =
       authStore.loginUser != null
         ? customAxios.privateAxios
@@ -83,7 +80,6 @@ const Post = () => {
   }, [authStore, postIdx]);
 
   useEffect(() => {
-    
     if (isNaN(postIdx)) {
       alert("잘못된 접근입니다.");
       navigate("/", { replace: true });
@@ -96,8 +92,6 @@ const Post = () => {
     }
   }, [authStore, getPost, navigate, postIdx]);
 
-
-  
   return (
     <CommonLayout isNavbar={true}>
       <Container className="p-5">
@@ -130,10 +124,18 @@ const Post = () => {
           {authStore.loginUser?.idx === post?.writer.idx ? (
             <div>
               <Button
-               variant="outline-success" type="button" onClick={() => navigate(`/update-post/${postIdx}`)}>
+                variant="outline-success"
+                type="button"
+                onClick={() => navigate(`/update-post/${postIdx}`)}
+              >
                 수정
               </Button>
-              <Button onClick={(deletePost)} variant="outline-danger" className="ms-2" type="button">
+              <Button
+                variant="outline-danger"
+                className="ms-2"
+                type="button"
+                onClick={deletePost}
+              >
                 삭제
               </Button>
             </div>

@@ -70,8 +70,8 @@ const MyNavbar = () => {
                       </Form>
                     </div>
                     <Dropdown.Divider className="d-md-none" />
-                    <Link to={"/my"} className="dropdown-item">
-                      내 제이로그
+                    <Link to={0} className="dropdown-item">
+                      미구현
                     </Link>
                     <Dropdown.Divider />
                     <Anchor

@@ -6,6 +6,23 @@ from entity.post_entity import PostEntity
 from dto import sign_dto
 
 
+class ResSetUpdatePost(BaseModel):
+    idx: int
+    title: str
+    content: str
+
+    class Config:
+        orm_mode = True
+
+    @staticmethod
+    def toDTO(post_entity: PostEntity):
+        return ResSetUpdatePost(
+            idx=post_entity.idx,
+            title=post_entity.title,
+            content=post_entity.content
+        )
+
+
 class ReqInsertPost(BaseModel):
     title: str
     thumbnail: str | None = None
