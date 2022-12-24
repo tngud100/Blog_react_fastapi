@@ -6,6 +6,12 @@ from entity.post_entity import PostEntity
 from dto import sign_dto
 
 
+class ReqUpdatePost(BaseModel):
+    title: str
+    thumbnail: str | None = None
+    content: str
+    summary: str
+
 class ResSetUpdatePost(BaseModel):
     idx: int
     title: str

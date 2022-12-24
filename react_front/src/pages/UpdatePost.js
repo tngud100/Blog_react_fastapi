@@ -48,6 +48,87 @@ const UpdatePost = () => {
       .finally(() => {});
   }, [postIdx]);
 
+  // 유효성 체크
+  const validateFields = () => {
+    const title = refs.current.title.value;
+    const content = refs.current.editor.getInstance().getMarkdown();
+
+    if (title === "") {
+      alert("제목을 입력하세요.");
+      return false;
+    }
+    if (content === "") {
+      alert("내용을 입력하세요.");
+      return false;
+    }
+
+    return true;
+  };
+
+  // 게시하기
+  const updatePost = () => {
+    if (!validateFields()) {
+      return;
+    }
+
+    const title = refs.current.title.value;
+    const content = refs.current.editor.getInstance().getMarkdown();
+
+    // 정규표현식을 이용한 태그 제거
+    const markdownImageRegex = /\[.*\]\((.*)\)/gi;
+    const markdownRegex = /(\*|_|#|`|~|>|!|\[|\]|\(|\)|\{|\}|\||\\)/gi;
+
+    const summary = content
+      .replace(markdownImageRegex, "")
+      .replace(markdownRegex, "")
+      .substring(0, 151);
+
+    const imageList = content.match(markdownImageRegex);
+    const thumbnailMarkdown = imageList != null ? imageList[0] : null;
+
+    const thumbnail =
+      thumbnailMarkdown != null
+        ? thumbnailMarkdown.substring(
+            thumbnailMarkdown.indexOf("](") + 2,
+            thumbnailMarkdown.length - 1
+          )
+        : null;
+
+    const changePost = {
+      title: title,
+      thumbnail: thumbnail,
+      content: content,
+      summary: summary,
+    };
+
+    customAxios
+      .privateAxios({
+        method: `put`,
+        url: `/api/v1/posts/${postIdx}`,
+        data: changePost,
+      })
+      .then((response) => {
+        console.log(response);
+        if (response.status === 200) {
+          alert("수정하였습니다.");
+          navigate(`/post/${postIdx}`, { replace: true });
+        } else {
+          alert(response.data.message);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error?.response?.data?.detail != null) {
+          alert(JSON.stringify(error?.response?.data?.detail));
+        } else if (error?.response?.data?.message != null) {
+          alert(error.response.data.message);
+        } else {
+          alert("오류가 발생했습니다. 관리자에게 문의하세요.");
+        }
+      })
+      .finally(() => {});
+  };
+
   useEffect(() => {
     setEditorHeight(`${window.innerHeight - 190}px`);
     window.onresize = () => setEditorHeight(`${window.innerHeight - 190}px`);
@@ -102,6 +183,7 @@ const UpdatePost = () => {
             className="btn-light fw-bold text-white"
             type="button"
             style={{ backgroundColor: "#20c997" }}
+            onClick={updatePost}
           >
             수정하기
           </Button>

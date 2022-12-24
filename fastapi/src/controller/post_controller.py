@@ -12,6 +12,11 @@ router = APIRouter(
 )
 
 
+@router.put("/{post_idx}")
+async def update_post(request: Request, req_dto: post_dto.ReqUpdatePost, post_idx: int = Path(), db: Session = Depends(get_db)) -> JSONResponse:
+    return post_service.update_post(request, req_dto, post_idx, db)
+
+
 @router.delete("/{post_idx}")
 async def delete_post(request: Request, post_idx: int = Path(), db: Session = Depends(get_db)) -> JSONResponse:
     return post_service.delete_post(request, post_idx, db)

@@ -95,7 +95,7 @@ const Post = () => {
   return (
     <CommonLayout isNavbar={true}>
       <Container className="p-5">
-        <h1>제목</h1>
+        <h1>{post?.title}</h1>
         <div className="d-flex justify-content-between align-items-center">
           <div>
             <span>
@@ -111,7 +111,11 @@ const Post = () => {
               {post?.createDate}
             </span>
           </div>
-          <button id="likeButton" className="btn">
+          <button
+            id="likeButton"
+            className="btn"
+            onClick={() => alert("미구현")}
+          >
             <Image
               src={post?.likeClicked ? LikeRedImg : LikeImg}
               width="15"

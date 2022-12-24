@@ -21,6 +21,36 @@ CANT_DELETE_OTHERS_POST_ERROR = {"code": 4, "message": "삭제 권한이 없습�
 CANT_UPDATE_OTHERS_POST_ERROR = {"code": 5, "message": "수정 권한이 없습니다."}
 INTERNAL_SERVER_ERROR = {"code": 99, "message": "서버 내부 에러입니다."}
 
+def update_post(request: Request, req_dto: post_dto.ReqUpdatePost, post_idx: int, db: Session) -> JSONResponse:
+    if not request.state.user:
+        return functions.res_generator(status_code=401, error_dict=AUTHORIZATION_ERROR)
+
+    auth_user: sign_dto.AccessJwt = request.state.user
+    
+    post_entity: PostEntity = db.query(PostEntity).filter(
+        PostEntity.idx == post_idx).filter(
+            PostEntity.delete_date == None).first()
+
+    if (post_entity == None):
+        return functions.res_generator(400, POST_NOT_EXIST_ERROR)
+
+    if (post_entity.user_idx != auth_user.idx):
+        return functions.res_generator(400, CANT_UPDATE_OTHERS_POST_ERROR)
+    try:
+        post_entity.title = req_dto.title
+        post_entity.thumbnail = req_dto.thumbnail
+        post_entity.content = req_dto.content
+        post_entity.summary = req_dto.summary
+        post_entity.update_date = datetime.now()
+        db.flush()
+    except Exception as e:
+        db.rollback()
+        print(e)
+        return functions.res_generator(status_code=500, error_dict=INTERNAL_SERVER_ERROR, content=e)
+    finally:
+        db.commit()
+
+    return functions.res_generator()
 
 def delete_post(request: Request, post_idx: int, db: Session) -> JSONResponse:
     if not request.state.user:
