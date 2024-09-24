@@ -23,3 +23,5 @@ class PostEntity(DBase):
     user_entity = relationship("UserEntity", back_populates="post_entity_list")
 
     like_entity_list = relationship("LikeEntity", back_populates="post_entity")
+
+    image_entity_list = relationship("ImageEntity", back_populates="post_entity")

@@ -35,3 +35,4 @@ async def get_posts(db: Session = Depends(get_db)) -> JSONResponse:
 @router.post("/")
 async def insert_post(request: Request, req_dto: post_dto.ReqInsertPost, db: Session = Depends(get_db)) -> JSONResponse:
     return post_service.insert_post(request, req_dto, db)
+

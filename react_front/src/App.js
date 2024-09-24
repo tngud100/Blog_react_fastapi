@@ -7,8 +7,11 @@ import My from "pages/My";
 import Post from "pages/Post";
 import Posts from "pages/Posts";
 import UpdatePost from "pages/UpdatePost";
+
 import React from "react";
+
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+
 import { StoreProvider } from "stores/RootStore";
 
 const App = () => {

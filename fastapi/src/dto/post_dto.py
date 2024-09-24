@@ -18,7 +18,7 @@ class ResSetUpdatePost(BaseModel):
     content: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
     @staticmethod
     def toDTO(post_entity: PostEntity):
@@ -34,13 +34,14 @@ class ReqInsertPost(BaseModel):
     thumbnail: str | None = None
     content: str
     summary: str
+    imageList: list[str]
 
 
 class ResInsertPost(BaseModel):
     idx: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ResMainPost(BaseModel):
@@ -51,7 +52,7 @@ class ResMainPost(BaseModel):
         profileImage: str
 
         class Config:
-            orm_mode = True
+            from_attributes = True
 
         @staticmethod
         def toDTO(user_entity: UserEntity):
@@ -70,7 +71,7 @@ class ResMainPost(BaseModel):
     writer: _Writer
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
     @staticmethod
     def toDTO(post_entity: PostEntity):
@@ -100,7 +101,7 @@ class ResDetailPost(BaseModel):
         profileImage: str
 
         class Config:
-            orm_mode = True
+            from_attributes = True
 
         @staticmethod
         def toDTO(user_entity: UserEntity):
@@ -120,7 +121,7 @@ class ResDetailPost(BaseModel):
     likeClicked: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
     @staticmethod
     def toDTO(post_entity: PostEntity, auth_user: sign_dto.AccessJwt | None):

@@ -1,5 +1,7 @@
 import time
 from datetime import datetime
+from base64 import b64decode
+import os
 
 import bcrypt
 import jwt
@@ -11,6 +13,11 @@ from config import constants
 from dto import post_dto, sign_dto
 from entity.post_entity import PostEntity
 from entity.user_entity import UserEntity
+from entity.image_entity import ImageEntity
+
+from controller.image_controller import delete_image
+from service.image_service import insert_image_db
+
 from fastapi import Request
 from util import functions
 
@@ -19,6 +26,7 @@ ID_ERROR = {"code": 2, "message": "계정에 문제가 있습니다."}
 POST_NOT_EXIST_ERROR = {"code": 3, "message": "해당 글이 없습니다."}
 CANT_DELETE_OTHERS_POST_ERROR = {"code": 4, "message": "삭제 권한이 없습니다."}
 CANT_UPDATE_OTHERS_POST_ERROR = {"code": 5, "message": "수정 권한이 없습니다."}
+
 INTERNAL_SERVER_ERROR = {"code": 99, "message": "서버 내부 에러입니다."}
 
 def update_post(request: Request, req_dto: post_dto.ReqUpdatePost, post_idx: int, db: Session) -> JSONResponse:
@@ -76,6 +84,7 @@ def delete_post(request: Request, post_idx: int, db: Session) -> JSONResponse:
 
     try:
         post_entity.delete_date = datetime.now()
+        delete_image(post_idx, db)
         db.flush()
     except Exception as e:
         db.rollback()
@@ -154,6 +163,8 @@ def insert_post(request: Request, req_dto: post_dto.ReqInsertPost, db: Session) 
     try:
         db.add(new_post)
         db.flush()
+        insert_image_db(req_dto.imageList, new_post.idx, db)
+
     except Exception as e:
         db.rollback()
         print(e)
@@ -164,3 +175,4 @@ def insert_post(request: Request, req_dto: post_dto.ReqInsertPost, db: Session) 
     db.refresh(new_post)
 
     return functions.res_generator(status_code=201, content=post_dto.ResInsertPost(idx=new_post.idx))
+

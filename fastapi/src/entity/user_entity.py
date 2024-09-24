@@ -21,3 +21,4 @@ class UserEntity(DBase):
     delete_date = Column(DateTime)
 
     post_entity_list = relationship("PostEntity", back_populates="user_entity")
+    

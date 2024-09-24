@@ -13,7 +13,7 @@ class ResSignUp(BaseModel):
     idx: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ReqSignIn(BaseModel):
@@ -55,7 +55,7 @@ class AccessJwt(BaseModel):
         )
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class RefreshJwt(BaseModel):
@@ -70,4 +70,4 @@ class RefreshJwt(BaseModel):
         )
 
     class Config:
-        orm_mode = True
+        from_attributes = True

@@ -1,5 +1,6 @@
 import time
 from datetime import datetime
+from sqlalchemy.exc import DatabaseError
 
 import bcrypt
 import jwt
@@ -70,6 +71,10 @@ def sign_up(req_dto: sign_dto.ReqSignUp, db: Session):
         db.rollback()
         print(e)
         return functions.res_generator(status_code=500, error_dict=INTERNAL_SERVER_ERROR, content=e)
+    except DatabaseError as e:
+        # 예외 발생 시, 로그 남기기 및 문자열로 변환
+        error_message = str(e)
+        return JSONResponse(status_code=500, content={"error": "Database error", "details": error_message})
     finally:
         db.commit()
 
@@ -104,7 +109,7 @@ def gen_token(user_entity):
         simpleDesc=user_entity.simple_desc,
         profileImage=user_entity.profile_image,
         role=user_entity.role,
-        exp=time.time() + constants.JWT_ACCESS_EXP_SECONDS
+        exp=int(time.time() + constants.JWT_ACCESS_EXP_SECONDS)
     )
 
     access_token = jwt.encode(jsonable_encoder(access_jwt_dto),
@@ -112,7 +117,7 @@ def gen_token(user_entity):
 
     refresh_jwt_dto = sign_dto.RefreshJwt(
         idx=user_entity.idx,
-        exp=time.time() + constants.JWT_REFRESH_EXP_SECONDS
+        exp=int(time.time() + constants.JWT_REFRESH_EXP_SECONDS)
     )
 
     refresh_token = jwt.encode(jsonable_encoder(refresh_jwt_dto),

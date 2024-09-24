@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="fastapi">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/fastapi.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
